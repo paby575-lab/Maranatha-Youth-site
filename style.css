@@ -1,4 +1,4 @@
-style.css       :root {
+:root {
   --bg: #f5f8fc;
   --bg-soft: #edf4ff;
   --white: #ffffff;
@@ -36,7 +36,7 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("New folder/photo_2026-09-28_11-17-51.jpg");
+  background-image: url("../New folder/photo_2026-09-28_11-17-51.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 42%;
@@ -79,15 +79,16 @@ img {
 
 .menu-toggle {
   position: fixed;
-  top: 110px;
+  top: 18px;
   left: 18px;
   z-index: 60;
   width: 54px;
   height: 54px;
   border: 0;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  box-shadow: 0 14px 28px rgba(15, 77, 139, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 22px rgba(15, 34, 40, 0.12);
+  border: 1px solid rgba(15, 77, 139, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,7 +112,7 @@ body.menu-open .menu-toggle {
   display: block;
   width: 22px;
   height: 2.5px;
-  background: var(--white);
+  background: var(--primary);
   border-radius: 10px;
   transition: 0.3s ease;
 }
@@ -621,6 +622,16 @@ body.menu-open .panel-backdrop {
 }
 
 @media (max-width: 820px) {
+  body {
+    max-width: 430px;
+    margin: 0 auto;
+    box-shadow: 0 0 0 1px rgba(17, 41, 63, 0.04);
+  }
+
+  .container {
+    width: min(100% - 1rem, 390px);
+  }
+
   .main-nav {
     display: none;
   }
@@ -628,27 +639,72 @@ body.menu-open .panel-backdrop {
   .hero-grid,
   .about-grid,
   .contact-grid,
-  .mission-grid {
+  .mission-grid,
+  .about-points {
     grid-template-columns: 1fr;
   }
 
   .quick-facts {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 560px) {
-  .menu-toggle {
-    top: 92px;
-    left: 12px;
-    width: 48px;
-    height: 48px;
+  .site-header {
+    border-radius: 0 0 18px 18px;
+  }
+
+  .brand-copy {
+    line-height: 1.1;
+  }
+
+  .brand-name {
+    font-size: 0.75rem;
+  }
+
+  .brand small,
+  .brand-copy span {
+    font-size: 0.6rem;
+  }
+
+  .hero {
+    padding: 3rem 0 2.5rem;
+  }
+
+  .hero-copy h1 {
+    font-size: 2.2rem;
+  }
+
+  .lead {
+    font-size: 0.98rem;
+  }
+
+  .mini-card,
+  .mission-card,
+  .point-card,
+  .contact-form {
+    border-radius: 18px;
   }
 }
 
 @media (max-width: 560px) {
+  .menu-toggle {
+    top: 16px;
+    left: 12px;
+    width: 48px;
+    height: 48px;
+  }
+
   .nav-wrap {
     min-height: 68px;
+    padding-top: 0.5rem;
+  }
+
+  .brand-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .brand {
+    gap: 0.6rem;
   }
 
   .hero {
@@ -656,7 +712,7 @@ body.menu-open .panel-backdrop {
   }
 
   .hero-copy h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   .btn {
