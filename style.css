@@ -36,13 +36,35 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("../New folder/photo_2026-09-28_11-17-51.jpg");
+  background-image: url("assets/myf-emblem.jpg");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 42%;
-  opacity: 0.05;
+  background-size: min(58vw, 620px);
+  opacity: 0.055;
+  mix-blend-mode: multiply;
   pointer-events: none;
   z-index: 0;
+  animation: watermark-drift 34s ease-in-out infinite alternate;
+}
+
+@keyframes watermark-drift {
+  from {
+    transform: translateY(-10px) rotate(-3deg) scale(0.98);
+  }
+  to {
+    transform: translateY(10px) rotate(3deg) scale(1.02);
+  }
+}
+
+@keyframes brand-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .site-header,
@@ -222,6 +244,7 @@ body.menu-open .panel-backdrop {
   display: flex;
   align-items: center;
   gap: 0.8rem;
+  animation: brand-arrive 0.7s ease-out both;
 }
 
 .brand-copy {
@@ -235,9 +258,17 @@ body.menu-open .panel-backdrop {
   height: 58px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(17, 41, 63, 0.10);
-  box-shadow: 0 10px 22px rgba(17, 41, 63, 0.08);
+  border: 2px solid var(--white);
+  outline: 2px solid rgba(240, 199, 93, 0.82);
+  outline-offset: 2px;
+  box-shadow: 0 8px 22px rgba(17, 41, 63, 0.16);
   background: var(--white);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+
+.brand:hover .brand-logo {
+  transform: rotate(7deg) scale(1.05);
+  box-shadow: 0 12px 28px rgba(17, 41, 63, 0.22);
 }
 
 .brand-name {
@@ -686,6 +717,10 @@ body.menu-open .panel-backdrop {
 }
 
 @media (max-width: 560px) {
+  body::before {
+    background-size: min(88vw, 440px);
+  }
+
   .menu-toggle {
     top: 16px;
     left: 12px;
@@ -726,5 +761,16 @@ body.menu-open .panel-backdrop {
   .footer-wrap {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
