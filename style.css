@@ -722,24 +722,51 @@ body.menu-open .panel-backdrop {
   }
 
   .menu-toggle {
-    top: 16px;
+    top: 12px;
     left: 12px;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
   }
 
   .nav-wrap {
     min-height: 68px;
-    padding-top: 0.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0 0.5rem 3.5rem;
   }
 
   .brand-logo {
-    width: 50px;
-    height: 50px;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
   }
 
   .brand {
-    gap: 0.6rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.5rem;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
+  .brand-name {
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .brand small,
+  .brand-copy span {
+    font-size: 0.55rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .nav-wrap > .btn {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.78rem;
   }
 
   .hero {
@@ -761,6 +788,19 @@ body.menu-open .panel-backdrop {
   .footer-wrap {
     flex-direction: column;
     text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .brand-name {
+    font-size: 0.64rem;
+    white-space: normal;
+    line-height: 1.05;
+  }
+
+  .brand small,
+  .brand-copy span {
+    display: none;
   }
 }
 
