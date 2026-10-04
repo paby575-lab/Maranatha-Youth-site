@@ -101,11 +101,11 @@ img {
 
 .menu-toggle {
   position: fixed;
-  top: 18px;
-  left: 18px;
+  top: 17px;
+  left: 12px;
   z-index: 60;
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.92);
@@ -238,6 +238,12 @@ body.menu-open .panel-backdrop {
   justify-content: space-between;
   gap: 1rem;
   min-height: 78px;
+}
+
+@media (min-width: 821px) and (max-width: 1212px) {
+  .nav-wrap {
+    padding-left: 4.5rem;
+  }
 }
 
 .brand {
@@ -731,7 +737,7 @@ body.menu-open .panel-backdrop {
   .nav-wrap {
     min-height: 68px;
     gap: 0.5rem;
-    padding: 0.5rem 0 0.5rem 3.5rem;
+    padding: 0.5rem 0 0.5rem 4.5rem;
   }
 
   .brand-logo {
