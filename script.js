@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const pageLoader = document.getElementById('pageLoader');
   const navLinks = document.querySelectorAll('a[href^="#"]');
 
-  function navigateTo(targetId) {
+  function navigateTo(targetId, onComplete) {
     if (!targetId || targetId === '#') return;
 
     const target = document.querySelector(targetId);
@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         setTimeout(() => {
           if (pageLoader) pageLoader.classList.remove('is-leaving');
+          if (onComplete) onComplete();
         }, 650);
       }, 700);
     }, delay);
@@ -93,7 +94,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
       }
 
-      navigateTo(href);
+      link.classList.add('nav-loading');
+
+      navigateTo(href, function () {
+        link.classList.remove('nav-loading');
+      });
     });
   });
 });
