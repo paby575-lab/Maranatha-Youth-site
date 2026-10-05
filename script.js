@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Section navigation with a centered-logo loading transition
   const pageLoader = document.getElementById('pageLoader');
-  const navLinks = document.querySelectorAll('.main-nav a, .panel-link, .btn');
+  const navLinks = document.querySelectorAll('a[href^="#"]');
 
   function navigateTo(targetId) {
     if (!targetId || targetId === '#') return;
