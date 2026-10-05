@@ -18,13 +18,20 @@
     />
     <link rel="stylesheet" href="style.css" />
     <script>
-      document.documentElement.classList.add('js');
+      document.documentElement.classList.add('js', 'page-loading');
+      // Safety: never trap the page behind the loader if the main script fails.
+      window.setTimeout(function () {
+        document.documentElement.classList.remove('page-loading');
+      }, 4000);
     </script>
   </head>
   <body>
-    <div class="page-loader" id="pageLoader" aria-live="polite">
-      <div class="loader-logo">
-        <img src="assets/myf-emblem.jpg" alt="Methodist Youth Fellowship" />
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite" aria-label="Loading">
+      <div class="loader-inner">
+        <img src="assets/myf-emblem.jpg" alt="Methodist Youth Fellowship" class="loader-emblem" />
+        <div class="loader-bar" aria-hidden="true">
+          <span class="loader-fill" id="loaderBar"></span>
+        </div>
       </div>
     </div>
 

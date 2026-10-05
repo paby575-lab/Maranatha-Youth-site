@@ -46,40 +46,105 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Section navigation with a centered-logo loading transition
+  // ---- Minimal page loader (first-paint friendly) ----
   const pageLoader = document.getElementById('pageLoader');
+  const loaderBar = document.getElementById('loaderBar');
   const navLinks = document.querySelectorAll('a[href^="#"]');
+  const reducedMotion =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  function drawProgress(frac) {
+    if (!loaderBar) return;
+    loaderBar.style.width = Math.round(Math.max(0, Math.min(1, frac)) * 100) + '%';
+  }
+
+  function lockScroll() {
+    document.body.classList.add('loader-active');
+    document.body.style.overflow = 'hidden';
+    document.body.setAttribute('aria-busy', 'true');
+  }
+
+  function unlockScroll() {
+    document.body.classList.remove('loader-active');
+    document.body.style.overflow = '';
+    document.body.setAttribute('aria-busy', 'false');
+  }
+
+  function showLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove('is-leaving');
+    requestAnimationFrame(function () {
+      pageLoader.classList.add('is-active');
+    });
+    drawProgress(0);
+  }
+
+  function hideLoader() {
+    if (!pageLoader) return;
+    pageLoader.classList.remove('is-active');
+    pageLoader.classList.add('is-leaving');
+    unlockScroll();
+    setTimeout(function () {
+      pageLoader.classList.remove('is-leaving');
+    }, 500);
+  }
+
+  function animateProgress(duration, onDone) {
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - start) / duration);
+      drawProgress(1 - Math.pow(1 - t, 3));
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else if (onDone) {
+        onDone();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function runInitialLoader() {
+    document.documentElement.classList.remove('page-loading');
+    if (reducedMotion || !pageLoader) return;
+    showLoader();
+    lockScroll();
+    animateProgress(850, function () {
+      setTimeout(hideLoader, 220);
+    });
+  }
+
+  runInitialLoader();
+
+  // Section navigation with a lightweight loading transition
   function navigateTo(targetId, onComplete) {
     if (!targetId || targetId === '#') return;
 
     const target = document.querySelector(targetId);
     if (!target) return;
 
-    if (pageLoader) {
-      pageLoader.classList.add('is-active');
-      document.body.classList.add('loader-active');
-      document.body.style.overflow = 'hidden';
+    showLoader();
+    lockScroll();
+
+    const scrollToTarget = function () {
+      const top = target.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
+    };
+
+    if (reducedMotion) {
+      scrollToTarget();
+      hideLoader();
+      if (onComplete) onComplete();
+      return;
     }
 
-    const delay = 650;
-    setTimeout(() => {
-      const top = target.getBoundingClientRect().top + window.scrollY - 90;
-      window.scrollTo({ top, behavior: 'smooth' });
-
-      setTimeout(() => {
-        if (pageLoader) {
-          pageLoader.classList.remove('is-active');
-          pageLoader.classList.add('is-leaving');
-          document.body.classList.remove('loader-active');
-          document.body.style.overflow = '';
-        }
-        setTimeout(() => {
-          if (pageLoader) pageLoader.classList.remove('is-leaving');
-          if (onComplete) onComplete();
-        }, 650);
-      }, 700);
-    }, delay);
+    animateProgress(480, function () {
+      scrollToTarget();
+      setTimeout(function () {
+        drawProgress(1);
+        setTimeout(hideLoader, 180);
+        if (onComplete) onComplete();
+      }, 150);
+    });
   }
 
   navLinks.forEach(function (link) {
