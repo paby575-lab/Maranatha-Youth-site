@@ -1434,6 +1434,63 @@ body.menu-open .panel-backdrop {
   font-size: 0.85rem;
 }
 
+/* Mobile tap feedback — ripple + press states */
+.ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+
+.link-arrow.ripple-host {
+  overflow: visible;
+}
+
+.ripple-ink {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(240, 199, 93, 0.4),
+    rgba(255, 255, 255, 0.5) 45%,
+    transparent 70%
+  );
+  transform: scale(0);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: ripple-expand 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes ripple-expand {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.btn,
+.panel-link,
+.menu-toggle,
+.back-to-top,
+.link-arrow,
+.footer-col a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn:active,
+.back-to-top:active,
+.link-arrow:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.menu-toggle:active {
+  transform: scale(0.92);
+}
+
+.panel-link:active,
+.footer-col a:active {
+  filter: brightness(0.9);
+}
+
 @media (max-width: 820px) {
   body {
     max-width: 430px;

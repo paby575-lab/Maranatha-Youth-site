@@ -233,4 +233,33 @@ document.addEventListener('DOMContentLoaded', function () {
       spyObserver.observe(section);
     });
   }
+
+  // Mobile tap ripple feedback
+  const rippleHosts = document.querySelectorAll(
+    '.btn, .menu-toggle, .back-to-top, .panel-link, .link-arrow, .footer-col a'
+  );
+
+  if (window.PointerEvent && !reducedMotion && rippleHosts.length) {
+    rippleHosts.forEach(function (host) {
+      host.classList.add('ripple-host');
+
+      host.addEventListener('pointerdown', function (event) {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+        const rect = host.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height) * 2.2;
+        const ink = document.createElement('span');
+        ink.className = 'ripple-ink';
+        ink.style.width = size + 'px';
+        ink.style.height = size + 'px';
+        ink.style.left = event.clientX - rect.left - size / 2 + 'px';
+        ink.style.top = event.clientY - rect.top - size / 2 + 'px';
+        host.appendChild(ink);
+
+        window.setTimeout(function () {
+          ink.remove();
+        }, 650);
+      });
+    });
+  }
 });
