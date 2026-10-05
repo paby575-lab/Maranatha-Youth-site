@@ -38,8 +38,8 @@ body {
   inset: 0;
   z-index: 9999;
   background: rgba(10, 42, 69, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,6 +60,7 @@ body {
 }
 
 .loader-logo {
+  position: relative;
   width: clamp(96px, 18vw, 160px);
   height: clamp(96px, 18vw, 160px);
   border-radius: 50%;
@@ -84,6 +85,21 @@ body {
   filter: brightness(1.05) contrast(1.05);
 }
 
+.loader-spinner {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 4px solid rgba(240, 199, 93, 0.18);
+  border-top-color: var(--yellow);
+  animation: loader-spin 0.9s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.page-loader.is-active .loader-spinner {
+  opacity: 1;
+}
+
 @keyframes loader-pop {
   from {
     opacity: 0;
@@ -103,6 +119,12 @@ body {
   to {
     opacity: 0;
     transform: scale(1.08);
+  }
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
