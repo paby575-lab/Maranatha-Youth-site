@@ -241,17 +241,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (window.PointerEvent && !reducedMotion && rippleHosts.length) {
     rippleHosts.forEach(function (host) {
-      // Only make the element a positioning context if it ISN'T one already —
-      // never override fixed/absolute placements (e.g. the hamburger button).
+      // Never override fixed/absolute placements (e.g. the hamburger button):
+      // only upgrade static elements to "relative" (which moves nothing).
       if (getComputedStyle(host).position === 'static') {
         host.style.position = 'relative';
+      }
+
+      // Clip the ink to the control so it looks like a native material ripple.
+      // "link-arrow" is excluded so its arrow can still slide on hover.
+      if (!host.classList.contains('link-arrow')) {
+        host.style.overflow = 'hidden';
+      }
+
+      function clearInks() {
+        host.querySelectorAll('.ripple-ink').forEach(function (ink) {
+          ink.remove();
+        });
       }
 
       host.addEventListener('pointerdown', function (event) {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
 
+        clearInks();
         const rect = host.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height) * 2.2;
+        const size = Math.max(rect.width, rect.height) * 2.4;
         const ink = document.createElement('span');
         ink.className = 'ripple-ink';
         ink.style.width = size + 'px';
@@ -262,8 +275,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         window.setTimeout(function () {
           ink.remove();
-        }, 650);
+        }, 600);
       });
+
+      // Cancel the ink cleanly if the browser takes over the gesture (scroll/drag).
+      host.addEventListener('pointercancel', clearInks);
     });
   }
 });

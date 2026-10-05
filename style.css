@@ -1434,20 +1434,15 @@ body.menu-open .panel-backdrop {
   font-size: 0.85rem;
 }
 
-/* Mobile tap feedback — ripple + press states */
+/* Tap feedback — Material-style ink ripple + snappy press states */
 .ripple-ink {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(240, 199, 93, 0.4),
-    rgba(255, 255, 255, 0.5) 45%,
-    transparent 70%
-  );
+  background: currentColor;
+  opacity: 0.3;
   transform: scale(0);
-  opacity: 0.55;
   pointer-events: none;
-  animation: ripple-expand 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: ripple-expand 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes ripple-expand {
@@ -1468,18 +1463,15 @@ body.menu-open .panel-backdrop {
 }
 
 .btn:active,
+.menu-toggle:active,
 .back-to-top:active,
 .link-arrow:active {
-  transform: translateY(1px) scale(0.97);
-}
-
-.menu-toggle:active {
-  transform: scale(0.92);
+  transform: scale(0.96);
 }
 
 .panel-link:active,
 .footer-col a:active {
-  filter: brightness(0.9);
+  filter: brightness(0.85);
 }
 
 @media (max-width: 820px) {
