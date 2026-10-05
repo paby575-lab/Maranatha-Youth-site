@@ -241,7 +241,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (window.PointerEvent && !reducedMotion && rippleHosts.length) {
     rippleHosts.forEach(function (host) {
-      host.classList.add('ripple-host');
+      // Only make the element a positioning context if it ISN'T one already —
+      // never override fixed/absolute placements (e.g. the hamburger button).
+      if (getComputedStyle(host).position === 'static') {
+        host.style.position = 'relative';
+      }
 
       host.addEventListener('pointerdown', function (event) {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
