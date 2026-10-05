@@ -101,4 +101,71 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+
+  // ---- Aesthetic enhancements ----
+
+  // Scroll reveal on sections & cards
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    revealEls.forEach(function (el) {
+      revealObserver.observe(el);
+    });
+  } else {
+    revealEls.forEach(function (el) {
+      el.classList.add('is-visible');
+    });
+  }
+
+  // Sticky header state + back-to-top visibility
+  const siteHeader = document.querySelector('.site-header');
+  const backToTop = document.getElementById('backToTop');
+
+  function handleScroll() {
+    const y = window.scrollY;
+    if (siteHeader) siteHeader.classList.toggle('is-scrolled', y > 10);
+    if (backToTop) backToTop.classList.toggle('is-visible', y > 600);
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+
+  if (backToTop) {
+    backToTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Scroll spy — highlight the active section in the main nav
+  const spySections = document.querySelectorAll('main section[id]');
+  const spyLinks = document.querySelectorAll('.main-nav a[href^="#"]');
+
+  if ('IntersectionObserver' in window && spySections.length && spyLinks.length) {
+    const spyObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            spyLinks.forEach(function (link) {
+              const isActive = link.getAttribute('href') === '#' + entry.target.id;
+              link.classList.toggle('is-active', isActive);
+            });
+          }
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    spySections.forEach(function (section) {
+      spyObserver.observe(section);
+    });
+  }
 });

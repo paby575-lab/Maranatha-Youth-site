@@ -13,10 +13,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script>
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
     <div class="page-loader" id="pageLoader" aria-live="polite">
@@ -84,7 +87,7 @@
     <main>
       <section id="home" class="hero">
         <div class="container hero-grid">
-          <div class="hero-copy">
+          <div class="hero-copy reveal">
             <p class="eyebrow">We Work, We Witness, We Worship.</p>
             <h1>Welcome to the Methodist Youth Fellowship</h1>
             <h2>Maranatha youth fellowship</h2>
@@ -103,7 +106,7 @@
             </ul>
           </div>
 
-          <div class="hero-card">
+          <div class="hero-card reveal">
             <div class="mini-card">
               <span class="mini-label">Next gathering</span>
               <h3>Sunday Youth Meeting</h3>
@@ -120,21 +123,22 @@
 
       <section id="updates" class="section updates-section">
         <div class="container">
-          <div class="section-heading center">
+          <div class="section-heading center reveal">
             <p class="eyebrow">What's New</p>
             <h2>Updates</h2>
           </div>
 
           <div class="updates-grid">
-            <article class="update-card">
+            <article class="update-card reveal">
               <div class="update-frame">
                 <img src="assets/excursion image.jpeg" alt="Youth excursion" />
+                <span class="update-badge">Latest</span>
               </div>
               <div class="update-body">
                 <span class="update-tag">Excursion</span>
                 <h3>Our Latest Outing</h3>
                 <p>A look back at our recent fellowship excursion — worship on the move, friendship in action, and Christ at the centre of every moment.</p>
-                <a href="#contact" class="link-arrow">Get in touch to join the next one →</a>
+                <a href="#contact" class="link-arrow">Get in touch to join the next one <span aria-hidden="true">→</span></a>
               </div>
             </article>
           </div>
@@ -143,12 +147,12 @@
 
 <section id="about" class="section">
         <div class="container">
-          <div class="section-heading center">
+          <div class="section-heading center reveal">
             <p class="eyebrow">About us</p>
             <h2>Who We Are</h2>
           </div>
 
-          <div class="about-layout">
+          <div class="about-layout reveal">
             <div class="about-text">
               <p class="about-intro">
                 <strong>Methodist Youth Fellowship — Maranatha Society</strong>
@@ -190,15 +194,15 @@
             </div>
 
             <div class="about-points">
-              <div class="point-card">
+              <div class="point-card reveal">
                 <h3>Spiritual Growth</h3>
                 <p>We nurture faith through worship, teaching, and prayer.</p>
               </div>
-              <div class="point-card">
+              <div class="point-card reveal">
                 <h3>Community</h3>
                 <p>We create a safe, welcoming place to belong and grow together.</p>
               </div>
-              <div class="point-card">
+              <div class="point-card reveal">
                 <h3>Service</h3>
                 <p>We respond to the needs of others with compassion and action.</p>
               </div>
@@ -209,13 +213,13 @@
 
       <section id="resources" class="section">
         <div class="container">
-          <div class="section-heading center">
+          <div class="section-heading center reveal">
             <p class="eyebrow">Resources</p>
             <h2>Resources</h2>
           </div>
 
           <div class="resources-grid">
-            <article class="resource-card anthem-card">
+            <article class="resource-card anthem-card reveal">
               <div class="resource-head">
                 <span class="resource-tag">Article 6</span>
                 <h3>The Youth Chorus</h3>
@@ -255,22 +259,22 @@
 
       <section id="mission" class="section accent-section">
         <div class="container">
-          <div class="section-heading center">
+          <div class="section-heading center reveal">
             <p class="eyebrow">Our mission</p>
             <h2>Raising young people for Christ</h2>
           </div>
           <div class="mission-grid">
-            <div class="mission-card">
+            <div class="mission-card reveal">
               <span>01</span>
               <h3>Worship</h3>
               <p>Encouraging a deeper relationship with God through praise and prayer. <br> John 4:24</p>
             </div>
-            <div class="mission-card">
+            <div class="mission-card reveal">
               <span>02</span>
               <h3>Discipleship</h3>
               <p>Helping one another grow in biblical truth, character, and purpose.<br> Matthew 28:19-20</p>
             </div>
-            <div class="mission-card">
+            <div class="mission-card reveal">
               <span>03</span>
               <h3>Outreach</h3>
               <p>Serving our church, families, and communities with generosity and love. <br> Mark 16:15</p>
@@ -279,15 +283,28 @@
         </div>
       </section>
 
+      <section class="verse-band" aria-label="Scripture of the day">
+        <div class="container verse-inner reveal">
+          <span class="verse-mark" aria-hidden="true">“</span>
+          <blockquote>
+            <p>
+              Let no one despise your youth, but be an example to the believers in
+              word, in conduct, in love, in spirit, in faith, in purity.
+            </p>
+            <cite>— 1 Timothy 4:12</cite>
+          </blockquote>
+        </div>
+      </section>
+
       <section id="contact" class="section contact-section">
         <div class="container contact-grid">
           <div>
-            <div class="section-heading left">
+            <div class="section-heading left reveal">
               <p class="eyebrow">Contact us</p>
               <h2>We would love to hear from you</h2>
             </div>
 
-            <div class="contact-details">
+            <div class="contact-details reveal">
               <div>
                 <h3>Location</h3>
                 <p>Omanjor</p>
@@ -303,7 +320,7 @@
             </div>
           </div>
 
-          <form class="contact-form" id="contactForm">
+          <form class="contact-form reveal" id="contactForm">
             <label>
               Full Name
               <input type="text" name="name" placeholder="Your name" required />
@@ -322,10 +339,57 @@
       </section>
     </main>
 
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5" />
+        <path d="m5 12 7-7 7 7" />
+      </svg>
+    </button>
+
     <footer class="site-footer">
-      <div class="container footer-wrap">
-        <p>© <span id="year"></span> Methodist Youth Fellowship</p>
-        <p>Growing in faith • Serving in love (WE WE WE)</p>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img
+              src="assets/myf-emblem.jpg"
+              alt="Methodist Youth Fellowship logo"
+              class="footer-logo"
+            />
+            <div>
+              <p class="footer-title">Methodist Youth Fellowship</p>
+              <p class="footer-sub">Maranatha Society • Awoshie Circuit</p>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Explore</h4>
+            <a href="#home">Home</a>
+            <a href="#updates">Updates</a>
+            <a href="#about">About Us</a>
+            <a href="#resources">Resources</a>
+            <a href="#mission">Mission</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="#contact">Contact Us</a>
+            <a href="mailto:youth@methodistchurch.org">youth@methodistchurch.org</a>
+            <a href="tel:+233531857423">+233 531 857 423</a>
+          </div>
+
+          <div class="footer-verse">
+            <p>
+              "Let no one despise your youth, but be an example to the believers in
+              word, in conduct, in love, in spirit, in faith, in purity."
+            </p>
+            <span>1 Timothy 4:12</span>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© <span id="year"></span> Methodist Youth Fellowship</p>
+          <p>Growing in faith • Serving in love (WE WE WE)</p>
+        </div>
       </div>
     </footer>
 
