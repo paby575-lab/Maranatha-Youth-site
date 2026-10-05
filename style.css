@@ -352,9 +352,41 @@ body.menu-open .panel-backdrop {
   min-height: 78px;
 }
 
+.main-nav {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
 @media (min-width: 821px) and (max-width: 1212px) {
   .nav-wrap {
     padding-left: 4.5rem;
+  }
+
+  .main-nav {
+    gap: 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.76rem;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1080px) {
+  .main-nav {
+    gap: 0.6rem;
+    font-size: 0.74rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.72rem;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
   }
 }
 
@@ -412,14 +444,17 @@ body.menu-open .panel-backdrop {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 1.7rem;
+  gap: 1.1rem;
   color: var(--muted);
   font-weight: 600;
+  font-size: 0.88rem;
+  white-space: nowrap;
 }
 
 .main-nav a {
   position: relative;
   transition: color 0.2s ease;
+  padding: 0.35rem 0;
 }
 
 .main-nav a::after {
@@ -449,10 +484,12 @@ body.menu-open .panel-backdrop {
   justify-content: center;
   border: 0;
   border-radius: 999px;
-  padding: 0.95rem 1.5rem;
+  padding: 0.7rem 1.1rem;
   font-weight: 700;
+  font-size: 0.82rem;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn:hover {
@@ -593,33 +630,36 @@ body.menu-open .panel-backdrop {
 
 .section-heading h2 {
   margin: 0;
-  font-size: clamp(2rem, 3vw, 3rem);
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
   letter-spacing: -0.04em;
   line-height: 1.15;
 }
 
 .about-layout {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .about-text {
-  max-width: 980px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   text-align: left;
-  line-height: 1.85;
+  line-height: 1.7;
 }
 
 .about-text p {
-  margin: 0 0 1.1rem;
+  margin: 0 0 1rem;
 }
 
 .about-intro {
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: var(--text);
-  text-align: center;
+  text-align: left;
 }
 
 .three-ws {
@@ -645,18 +685,19 @@ body.menu-open .panel-backdrop {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(17, 41, 63, 0.06);
   border-radius: 22px;
-  padding: 1.4rem 1.3rem;
+  padding: 1.1rem 1.1rem;
   box-shadow: 0 10px 24px rgba(17, 41, 63, 0.04);
 }
 
 .point-card h3 {
-  margin: 0 0 0.4rem;
-  font-size: 1.2rem;
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
 }
 
 .point-card p {
   margin: 0;
   color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .accent-section {
