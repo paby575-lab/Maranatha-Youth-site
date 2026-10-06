@@ -492,9 +492,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (hymnViewTitle) hymnViewTitle.textContent = hymn.t;
     if (hymnViewAuthor) hymnViewAuthor.textContent = hymn.a || 'Methodist Hymn Book';
     if (hymnViewBody) {
-      hymnViewBody.innerHTML = (hymn.v || [])
+      const allStanzas = hymn.v || [];
+      hymnViewBody.innerHTML = allStanzas
         .map(function (stanza, i) {
-          const label = labelStanza(i, stanza, hymn.v.length);
+          const label = labelStanza(i, stanza, allStanzas.length, allStanzas);
           return '<p class="hymn-stanza">' +
             (label ? '<span class="hymn-stanza-label">' + escapeHtml(label) + '</span>' : '') +
             stanza.map(escapeHtml).join('<br>') +
@@ -505,11 +506,35 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Heuristics for naming a stanza: CHORUS / VERSE / REFRAIN.
-  function labelStanza(index, stanza, total) {
+  function labelStanza(index, stanza, total, allStanzas) {
     const joined = stanza.join(' ').toLowerCase();
-    if (/\brefrain\b/.test(joined)) return 'Chorus';
+
+    // 1. Explicit markers in the text.
+    if (/\b(refrain|chorus)\b/.test(joined)) return 'Chorus';
+
+    // 2. If this stanza's text matches another stanza exactly, it's a repeated chorus.
+    //    Build a normalized version (lowercase, stripped punctuation) for comparison.
+    const normalized = joined.replace(/[.,;:!?'"-]/g, '').trim();
+    if (normalized) {
+      for (let i = 0; i < allStanzas.length; i++) {
+        if (i === index) continue;
+        const other = allStanzas[i].join(' ').toLowerCase()
+          .replace(/[.,;:!?'"-]/g, '').trim();
+        if (other === normalized) return 'Chorus';
+      }
+    }
+
+    // 3. If this is the last stanza and it's shorter (chorus-like), treat as chorus.
+    if (index === total - 1 && total > 2) {
+      const avgLines = allStanzas.reduce((sum, s) => sum + s.length, 0) / total;
+      if (stanza.length <= avgLines && stanza.length <= 4) return 'Chorus';
+    }
+
+    // 4. First stanza → Verse 1 (if more than one stanza).
     if (index === 0 && total > 1) return 'Verse 1';
     if (index === 0) return '';
+
+    // Default: Verse N
     return 'Verse ' + (index + 1);
   }
 
