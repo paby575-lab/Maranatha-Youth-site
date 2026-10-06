@@ -448,12 +448,53 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function openHymn(index) {
+  function openHymn(index, direction) {
     if (!hymnView || !currentResults.length) return;
     const hymn = currentResults[index];
     if (!hymn) return;
     currentIndex = index;
 
+    const wasOpen = hymnView.classList.contains('is-open');
+    const slideDir = direction === 'next' ? 1 : direction === 'prev' ? -1 : 0;
+
+    if (wasOpen && slideDir !== 0) {
+      // Slide the current hymn out, then the new one in.
+      hymnViewBody.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
+      hymnViewBody.style.transform = 'translateX(' + (slideDir * 40) + '%)';
+
+      requestAnimationFrame(function () {
+        setTimeout(function () {
+          hymnViewBody.style.opacity = '0';
+          hymnViewBody.style.transform = 'translateX(' + (slideDir * -100) + '%)';
+
+          setTimeout(function () {
+            fillHymn(hymn);
+            hymnViewBody.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease';
+            hymnViewBody.style.transform = 'translateX(0)';
+            hymnViewBody.style.opacity = '1';
+          }, 180);
+        }, 180);
+      });
+    } else {
+      fillHymn(hymn);
+    }
+
+    if (hymnViewPos) {
+      hymnViewPos.textContent = (index + 1) + ' of ' + currentResults.length;
+    }
+    if (hymnPrev) hymnPrev.disabled = index <= 0;
+    if (hymnNext) hymnNext.disabled = index >= currentResults.length - 1;
+
+    if (!wasOpen) {
+      document.body.classList.add('hymn-open');
+      hymnView.classList.add('is-open');
+      hymnView.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (hymnViewClose) hymnViewClose.focus();
+    }
+  }
+
+  function fillHymn(hymn) {
     if (hymnViewNum) hymnViewNum.textContent = 'MHB ' + hymn.n;
     if (hymnViewTitle) hymnViewTitle.textContent = hymn.t;
     if (hymnViewAuthor) hymnViewAuthor.textContent = hymn.a || 'Methodist Hymn Book';
@@ -468,17 +509,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .join('');
     }
-    if (hymnViewPos) {
-      hymnViewPos.textContent = (index + 1) + ' of ' + currentResults.length;
-    }
-    if (hymnPrev) hymnPrev.disabled = index <= 0;
-    if (hymnNext) hymnNext.disabled = index >= currentResults.length - 1;
-
-    document.body.classList.add('hymn-open');
-    hymnView.classList.add('is-open');
-    hymnView.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    if (hymnViewClose) hymnViewClose.focus();
   }
 
   // Heuristics for naming a stanza: CHORUS / VERSE / REFRAIN.
@@ -570,19 +600,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (hymnPrev) {
       hymnPrev.addEventListener('click', function () {
-        if (currentIndex > 0) openHymn(currentIndex - 1);
+        if (currentIndex > 0) openHymn(currentIndex - 1, 'prev');
       });
     }
     if (hymnNext) {
       hymnNext.addEventListener('click', function () {
-        if (currentIndex < currentResults.length - 1) openHymn(currentIndex + 1);
+        if (currentIndex < currentResults.length - 1) openHymn(currentIndex + 1, 'next');
       });
     }
     document.addEventListener('keydown', function (event) {
       if (!hymnView || !hymnView.classList.contains('is-open')) return;
       if (event.key === 'Escape') closeHymn();
-      if (event.key === 'ArrowLeft' && hymnPrev && !hymnPrev.disabled) hymnPrev.click();
-      if (event.key === 'ArrowRight' && hymnNext && !hymnNext.disabled) hymnNext.click();
+      if (event.key === 'ArrowLeft' && hymnPrev && !hymnPrev.disabled) openHymn(currentIndex - 1, 'prev');
+      if (event.key === 'ArrowRight' && hymnNext && !hymnNext.disabled) openHymn(currentIndex + 1, 'next');
     });
   }
 
