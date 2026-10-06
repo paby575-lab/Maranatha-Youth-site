@@ -30,19 +30,106 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
+    const methodBtns = contactForm.querySelectorAll('.send-method-btn');
+    const fieldWhatsapp = document.getElementById('fieldWhatsapp');
+    const fieldEmail = document.getElementById('fieldEmail');
+    const phoneInput = document.getElementById('cfPhone');
+    const emailInput = document.getElementById('cfEmail');
+    const submitIcon = document.getElementById('submitIcon');
+    const submitLabel = document.getElementById('submitLabel');
+    const formNote = document.getElementById('formNote');
+
+    const WHATSAPP_NUMBER = '233531857423';
+    const CONTACT_EMAIL = 'eacquahappiah@gmail.com';
+    let sendMethod = 'whatsapp';
+
+    function setSendMethod(next) {
+      sendMethod = next;
+      methodBtns.forEach(function (btn) {
+        const isActive = btn.dataset.method === next;
+        btn.classList.toggle('is-active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+
+      fieldWhatsapp.hidden = next !== 'whatsapp';
+      fieldEmail.hidden = next !== 'email';
+      phoneInput.required = next === 'whatsapp';
+      emailInput.required = next === 'email';
+
+      const icon = contactForm.querySelector(
+        '.send-method-btn[data-method="' + next + '"] .send-method-icon'
+      );
+      if (submitIcon && icon) submitIcon.innerHTML = icon.outerHTML;
+
+      if (submitLabel) {
+        submitLabel.textContent = next === 'whatsapp' ? 'Send via WhatsApp' : 'Send via Email';
+      }
+      if (formNote) {
+        formNote.textContent =
+          next === 'whatsapp'
+            ? 'Opens WhatsApp with your message ready to send.'
+            : 'Opens your email app, addressed to eacquahappiah@gmail.com.';
+      }
+    }
+
+    methodBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setSendMethod(btn.dataset.method);
+      });
+    });
+
+    setSendMethod('whatsapp');
+
     contactForm.addEventListener('submit', function (event) {
       event.preventDefault();
-      const button = contactForm.querySelector('button');
-      const originalText = button.textContent;
 
-      button.textContent = 'Message Sent';
-      button.disabled = true;
+      const name = document.getElementById('cfName').value.trim();
+      const message = document.getElementById('cfMessage').value.trim();
+      const phone = phoneInput.value.trim();
+      const email = emailInput.value.trim();
 
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
+      if (!name || !message) return;
+      if (sendMethod === 'whatsapp' && !phone) return;
+      if (sendMethod === 'email' && !email) return;
+
+      const button = contactForm.querySelector('button[type="submit"]');
+      if (button) button.disabled = true;
+
+      const restoreNote = function () {
+        if (formNote) {
+          formNote.textContent =
+            sendMethod === 'whatsapp'
+              ? 'Opens WhatsApp with your message ready to send.'
+              : 'Opens your email app, addressed to eacquahappiah@gmail.com.';
+        }
+      };
+
+      if (sendMethod === 'whatsapp') {
+        const text = 'Hello Maranatha Society! My name is ' + name + '.\n' + message;
+        const link = document.createElement('a');
+        link.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(text);
+        link.target = '_blank';
+        link.rel = 'noopener,noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        if (formNote) formNote.textContent = 'Opening WhatsApp with your message…';
+      } else {
+        const subject = 'Message from ' + name + ' (Maranatha Society)';
+        const body = 'Name: ' + name + '\nEmail: ' + email + '\n\n' + message;
+        window.location.href =
+          'mailto:' + CONTACT_EMAIL +
+          '?subject=' + encodeURIComponent(subject) +
+          '&body=' + encodeURIComponent(body);
+        if (formNote) formNote.textContent = 'Opening your email app…';
+      }
+
+      setTimeout(function () {
+        if (button) button.disabled = false;
         contactForm.reset();
-      }, 2000);
+        setSendMethod(sendMethod);
+        restoreNote();
+      }, 1500);
     });
   }
 
@@ -234,9 +321,274 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // ---- Hymnal: full Methodist Hymn Book (MHB) search engine ----
+  const hymnGrid = document.getElementById('hymnGrid');
+  const hymnSearch = document.getElementById('hymnSearch');
+  const hymnCount = document.getElementById('hymnCount');
+  const hymnView = document.getElementById('hymnView');
+  const hymnViewNum = document.getElementById('hymnViewNum');
+  const hymnViewTitle = document.getElementById('hymnViewTitle');
+  const hymnViewAuthor = document.getElementById('hymnViewAuthor');
+  const hymnViewBody = document.getElementById('hymnViewBody');
+  const hymnViewClose = document.getElementById('hymnViewClose');
+  const hymnPrev = document.getElementById('hymnPrev');
+  const hymnNext = document.getElementById('hymnNext');
+  const hymnViewPos = document.getElementById('hymnViewPos');
+
+  // The complete MHB (hymns 1-984: number, title, author, verses) lives in
+  // hymns.js as window.MHB_HYMNS. The tiny fallback below only kicks in if
+  // that file could not load, so the section still works.
+  const HYMNS =
+    typeof window.MHB_HYMNS !== 'undefined' && window.MHB_HYMNS.length
+      ? window.MHB_HYMNS
+      : [
+          {
+            n: 1,
+            t: 'O For A Thousand Tongues To Sing',
+            a: 'Charles Wesley',
+            v: [
+              [
+                'O for a thousand tongues to sing',
+                'My great Redeemer\u2019s praise,',
+                'The glories of my God and King,',
+                'The triumphs of His grace!'
+              ]
+            ]
+          },
+          {
+            n: 2,
+            t: 'All People That on Earth Do Dwell',
+            a: 'William Kethe',
+            v: [
+              [
+                'All people that on earth do dwell,',
+                'Sing to the Lord with cheerful voice;',
+                'Him serve with mirth, His praise forth tell,',
+                'Come ye before Him and rejoice.'
+              ]
+            ]
+          },
+          {
+            n: 3,
+            t: 'O Worship the King',
+            a: 'Robert Grant',
+            v: [
+              [
+                'O worship the King, all glorious above,',
+                'O gratefully sing His power and His love:'
+              ]
+            ]
+          }
+        ];
+  const HYMN_TOTAL = HYMNS.length;
+
+  // Pre-built lowercase "haystack" (title + author + lyrics) per hymn for fast search.
+  const hymnHaystacks = new Map();
+  function hymnHaystack(h) {
+    let s = hymnHaystacks.get(h.n);
+    if (s === undefined) {
+      const lyrics = (h.v || [])
+        .map(function (st) { return st.join(' '); })
+        .join(' ');
+      s = (h.t + ' ' + (h.a || '') + ' ' + lyrics).toLowerCase();
+      hymnHaystacks.set(h.n, s);
+    }
+    return s;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  let currentResults = [];
+  let currentIndex = 0;
+
+  function renderHymns(list) {
+    if (!hymnGrid) return;
+    hymnGrid.innerHTML = '';
+    currentResults = list;
+    currentIndex = 0;
+
+    if (!list.length) {
+      const empty = document.createElement('p');
+      empty.className = 'hymn-empty';
+      empty.textContent =
+        'No hymns match your search. Try a hymn number (e.g. “375”) or part of a title (e.g. “Abide with me”).';
+      hymnGrid.appendChild(empty);
+      if (hymnCount) {
+        hymnCount.textContent = 'No matches found in the ' + HYMN_TOTAL + ' MHB hymns';
+      }
+      return;
+    }
+
+    list.forEach(function (hymn, index) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'hymn-card';
+      card.setAttribute('data-number', hymn.n);
+      card.innerHTML =
+        '<span class="hymn-num">' + escapeHtml(hymn.n) + '</span>' +
+        '<span class="hymn-title">' + escapeHtml(hymn.t) + '</span>';
+      card.addEventListener('click', function () {
+        openHymn(index);
+      });
+      hymnGrid.appendChild(card);
+    });
+
+    if (hymnCount) {
+      hymnCount.textContent =
+        list.length === HYMN_TOTAL
+          ? 'All ' + HYMN_TOTAL + ' hymns of the Methodist Hymn Book'
+          : 'Showing ' + list.length + ' of ' + HYMN_TOTAL + ' hymns';
+    }
+  }
+
+  function openHymn(index) {
+    if (!hymnView || !currentResults.length) return;
+    const hymn = currentResults[index];
+    if (!hymn) return;
+    currentIndex = index;
+
+    if (hymnViewNum) hymnViewNum.textContent = 'MHB ' + hymn.n;
+    if (hymnViewTitle) hymnViewTitle.textContent = hymn.t;
+    if (hymnViewAuthor) hymnViewAuthor.textContent = hymn.a || 'Methodist Hymn Book';
+    if (hymnViewBody) {
+      hymnViewBody.innerHTML = (hymn.v || [])
+        .map(function (stanza, i) {
+          const label = labelStanza(i, stanza, hymn.v.length);
+          return '<p class="hymn-stanza">' +
+            (label ? '<span class="hymn-stanza-label">' + escapeHtml(label) + '</span>' : '') +
+            stanza.map(escapeHtml).join('<br>') +
+            '</p>';
+        })
+        .join('');
+    }
+    if (hymnViewPos) {
+      hymnViewPos.textContent = (index + 1) + ' of ' + currentResults.length;
+    }
+    if (hymnPrev) hymnPrev.disabled = index <= 0;
+    if (hymnNext) hymnNext.disabled = index >= currentResults.length - 1;
+
+    document.body.classList.add('hymn-open');
+    hymnView.classList.add('is-open');
+    hymnView.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (hymnViewClose) hymnViewClose.focus();
+  }
+
+  // Heuristics for naming a stanza: CHORUS / VERSE / REFRAIN.
+  function labelStanza(index, stanza, total) {
+    const joined = stanza.join(' ').toLowerCase();
+    if (/\brefrain\b/.test(joined)) return 'Chorus';
+    if (index === 0 && total > 1) return 'Verse 1';
+    if (index === 0) return '';
+    return 'Verse ' + (index + 1);
+  }
+
+  function closeHymn() {
+    if (!hymnView) return;
+    hymnView.classList.remove('is-open');
+    hymnView.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('hymn-open');
+    document.body.style.overflow = '';
+  }
+
+  if (hymnGrid && hymnSearch) {
+    renderHymns(HYMNS);
+
+    // Google-style live search: matches hymn numbers (e.g. "57", "MHB 375")
+    // and words from the title, author, or full text.
+    hymnSearch.addEventListener('input', function () {
+      const q = hymnSearch.value.trim();
+      if (!q) {
+        renderHymns(HYMNS);
+        return;
+      }
+
+      const tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
+      let numberToken = '';
+      tokens.forEach(function (tok) {
+        const digits = tok.replace(/^[#nobm\s]+/, '');
+        if (/^\d+$/.test(digits)) numberToken = digits;
+      });
+      const textTokens = tokens.filter(function (tok) {
+        const digits = tok.replace(/^[#nobm\s]+/, '');
+        return !/^\d+$/.test(digits) && tok !== 'mhb' && tok !== 'no';
+      });
+
+      if (!numberToken && !textTokens.length) {
+        renderHymns(HYMNS);
+        return;
+      }
+
+      // Relevance scoring so the closest title/number match rises to the top.
+      function relevance(h) {
+        const s = String(h.n);
+        const title = h.t.toLowerCase();
+        const firstLine = ((h.v || [])[0] || []).join(' ').toLowerCase();
+        const phrase = textTokens.join(' ');
+        if (numberToken) {
+          if (s === numberToken) return 0;
+          if (s.indexOf(numberToken) === 0) return 1;
+          return 2;
+        }
+        if (title === phrase) return 0;
+        if (title.indexOf(phrase) >= 0) return 1;
+        if (title.indexOf(textTokens[0]) >= 0) return 2;
+        if (firstLine.indexOf(phrase) >= 0) return 3;
+        return 4;
+      }
+
+      const filtered = HYMNS
+        .filter(function (h) {
+          if (numberToken && String(h.n).indexOf(numberToken) === 0) return true;
+          if (!textTokens.length) return false;
+          const hay = hymnHaystack(h);
+          return textTokens.every(function (tok) {
+            return hay.indexOf(tok) !== -1;
+          });
+        })
+        .sort(function (a, b) {
+          return relevance(a) - relevance(b) || a.n - b.n;
+        });
+
+      renderHymns(filtered);
+    });
+
+    if (hymnViewClose) {
+      hymnViewClose.addEventListener('click', closeHymn);
+    }
+    if (hymnView) {
+      hymnView.addEventListener('click', function (event) {
+        if (event.target === hymnView) closeHymn();
+      });
+    }
+    if (hymnPrev) {
+      hymnPrev.addEventListener('click', function () {
+        if (currentIndex > 0) openHymn(currentIndex - 1);
+      });
+    }
+    if (hymnNext) {
+      hymnNext.addEventListener('click', function () {
+        if (currentIndex < currentResults.length - 1) openHymn(currentIndex + 1);
+      });
+    }
+    document.addEventListener('keydown', function (event) {
+      if (!hymnView || !hymnView.classList.contains('is-open')) return;
+      if (event.key === 'Escape') closeHymn();
+      if (event.key === 'ArrowLeft' && hymnPrev && !hymnPrev.disabled) hymnPrev.click();
+      if (event.key === 'ArrowRight' && hymnNext && !hymnNext.disabled) hymnNext.click();
+    });
+  }
+
   // Mobile tap ripple feedback
   const rippleHosts = document.querySelectorAll(
-    '.btn, .menu-toggle, .back-to-top, .panel-link, .link-arrow, .footer-col a'
+    '.send-method-btn, .hymn-card, .btn, .menu-toggle, .back-to-top, .panel-link, .link-arrow, .footer-col a'
   );
 
   if (window.PointerEvent && !reducedMotion && rippleHosts.length) {

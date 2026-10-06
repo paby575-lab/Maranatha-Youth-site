@@ -266,12 +266,21 @@ img {
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(17, 41, 63, 0.06);
   box-shadow: 0 6px 24px rgba(17, 41, 63, 0.03);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
 }
 
 .site-header.is-scrolled {
   background: rgba(255, 255, 255, 0.94);
   box-shadow: 0 10px 32px rgba(17, 41, 63, 0.09);
+}
+
+/* When a hymn is open, the top bar and hamburger tuck away so the
+   hymn text is the only thing on screen. They slide back on close. */
+body.hymn-open .site-header,
+body.hymn-open .menu-toggle {
+  transform: translateY(-120%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .menu-toggle {
@@ -1040,6 +1049,348 @@ body.menu-open .panel-backdrop {
   color: var(--text);
 }
 
+.resource-cta {
+  margin-top: 0.4rem;
+}
+
+/* ---- Hymnal: Methodist Hymn Book (MHB) search ---- */
+.hymn-controls {
+  display: grid;
+  gap: 0.7rem;
+  max-width: 640px;
+  margin: 0 auto 2rem;
+}
+
+.hymn-search {
+  position: relative;
+}
+
+.hymn-search svg {
+  position: absolute;
+  left: 1.05rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.hymn-search input {
+  width: 100%;
+  padding: 1.05rem 1.2rem 1.05rem 2.95rem;
+  border-radius: 999px;
+  border: 2px solid rgba(15, 77, 139, 0.14);
+  background: rgba(255, 255, 255, 0.95);
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  box-shadow: 0 12px 28px rgba(17, 41, 63, 0.07);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.hymn-search input::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+.hymn-search input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 4px rgba(15, 77, 139, 0.12),
+    0 12px 28px rgba(17, 41, 63, 0.07);
+}
+
+.hymn-count {
+  text-align: center;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.hymn-hint {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.hymn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.85rem;
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+.hymn-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid rgba(17, 41, 63, 0.07);
+  background: rgba(255, 255, 255, 0.95);
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 7px 18px rgba(17, 41, 63, 0.05);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.hymn-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(240, 199, 93, 0.6);
+  box-shadow: 0 14px 30px rgba(17, 41, 63, 0.12);
+}
+
+.hymn-card:active {
+  transform: scale(0.98);
+}
+
+.hymn-num {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 0 0 3px rgba(240, 199, 93, 0.35);
+}
+
+.hymn-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.hymn-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(15, 77, 139, 0.25);
+  border-radius: 20px;
+}
+
+.hymn-view {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(9, 17, 20, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.hymn-view.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hymn-view-panel {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(86vh, 780px);
+  overflow-y: auto;
+  background: linear-gradient(180deg, #ffffff, #f7fafd);
+  border-radius: 26px;
+  padding: 2.4rem 2.6rem 2rem;
+  box-shadow: 0 30px 70px rgba(9, 17, 20, 0.4);
+  transform: translateY(18px) scale(0.98);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hymn-view.is-open .hymn-view-panel {
+  transform: none;
+}
+
+.hymn-view-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(15, 77, 139, 0.08);
+  color: var(--primary);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.hymn-view-close:hover {
+  background: var(--primary);
+  color: var(--white);
+  transform: rotate(90deg);
+}
+
+.hymn-view-head {
+  text-align: center;
+  padding-right: 2.4rem;
+  margin-bottom: 1.6rem;
+}
+
+.hymn-view-num {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+}
+
+.hymn-view-title {
+  margin: 0.75rem 0 0.25rem;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+
+.hymn-view-author {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.hymn-view-body {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hymn-stanza {
+  margin: 0 0 1.4rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 2;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hymn-view.is-open .hymn-stanza {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hymn-stanza:nth-child(2) { transition-delay: 0.05s; }
+.hymn-stanza:nth-child(3) { transition-delay: 0.1s; }
+.hymn-stanza:nth-child(4) { transition-delay: 0.15s; }
+.hymn-stanza:nth-child(5) { transition-delay: 0.2s; }
+.hymn-stanza:nth-child(6) { transition-delay: 0.25s; }
+
+.hymn-stanza-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.hymn-view-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(17, 41, 63, 0.08);
+}
+
+.hymn-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(15, 77, 139, 0.15);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--primary);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hymn-nav-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: 0 10px 22px var(--primary-glow);
+  transform: translateY(-2px);
+}
+
+.hymn-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.hymn-nav-pos {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 820px) {
+  .hymn-view {
+    padding: 0.75rem;
+  }
+
+  .hymn-view-panel {
+    padding: 2rem 1.3rem 1.4rem;
+  }
+
+  .hymn-stanza {
+    font-size: 1rem;
+    line-height: 1.95;
+  }
+
+  .hymn-view-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hymn-nav-pos {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+}
+
 .updates-section {
   background:
     linear-gradient(135deg, rgba(15, 77, 139, 0.05), rgba(240, 199, 93, 0.06)),
@@ -1308,6 +1659,92 @@ body.menu-open .panel-backdrop {
   box-shadow: 0 0 0 4px rgba(15, 77, 139, 0.08);
 }
 
+.send-method {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  background: rgba(15, 77, 139, 0.06);
+  border: 1px solid rgba(15, 77, 139, 0.1);
+  border-radius: 999px;
+}
+
+.send-method-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+}
+
+.send-method-btn.is-active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  box-shadow: 0 8px 18px var(--primary-glow);
+}
+
+.send-method-btn:active {
+  transform: scale(0.96);
+}
+
+.send-method-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.contact-form .form-field[hidden] {
+  display: none;
+}
+
+.contact-form .form-field:not([hidden]) {
+  animation: form-field-in 0.28s ease both;
+}
+
+@keyframes form-field-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.45rem;
+}
+
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.form-note {
+  margin: -0.35rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+  min-height: 1.1em;
+}
+
 .back-to-top {
   position: fixed;
   right: 22px;
@@ -1457,6 +1894,7 @@ body.menu-open .panel-backdrop {
 .menu-toggle,
 .back-to-top,
 .link-arrow,
+.send-method-btn,
 .footer-col a {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
