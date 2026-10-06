@@ -1049,10 +1049,6 @@ body.menu-open .panel-backdrop {
   color: var(--text);
 }
 
-.resource-cta {
-  margin-top: 0.4rem;
-}
-
 /* ---- Hymnal: Methodist Hymn Book (MHB) search ---- */
 .hymn-controls {
   display: grid;
@@ -1138,6 +1134,59 @@ body.menu-open .panel-backdrop {
 #hymns .hymn-count {
   margin-bottom: 0.35rem;
   font-size: 0.78rem;
+}
+
+#hymns .hymn-intro-card {
+  max-width: 720px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(160deg, rgba(15, 77, 139, 0.06), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(240, 199, 93, 0.4);
+  border-radius: 26px;
+  padding: 1.6rem 1.8rem;
+  text-align: center;
+  box-shadow: 0 14px 30px rgba(17, 41, 63, 0.06);
+}
+
+#hymns .hymn-intro-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+#hymns .hymn-intro-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: rgba(15, 77, 139, 0.1);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+}
+
+#hymns .hymn-intro-card h3 {
+  margin: 0.3rem 0 0;
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  letter-spacing: -0.02em;
+}
+
+#hymns .hymn-intro-sub {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#hymns .hymn-intro-text {
+  margin: 0.8rem 0 1.1rem;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 0.95rem;
+}
+
+#hymns .hymn-intro-cta {
+  font-size: 0.85rem;
+  padding: 0.65rem 1.3rem;
 }
 
 #hymns + .section {
