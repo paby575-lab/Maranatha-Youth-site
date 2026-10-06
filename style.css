@@ -1118,12 +1118,37 @@ body.menu-open .panel-backdrop {
   line-height: 1.6;
 }
 
+#hymns {
+  padding: 1.5rem 0 0.5rem;
+}
+
+#hymns .section-heading {
+  margin-bottom: 0.8rem;
+}
+
+#hymns .hymn-controls {
+  margin-bottom: 0.6rem;
+}
+
+#hymns .hymn-hint {
+  margin: 0 0 0.8rem;
+}
+
+#hymns + .section {
+  padding-top: 2rem;
+}
+
 .hymn-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 0.85rem;
   max-width: 1020px;
   margin: 0 auto;
+  min-height: 0;
+}
+
+.hymn-grid:empty {
+  display: none;
 }
 
 .hymn-card {
