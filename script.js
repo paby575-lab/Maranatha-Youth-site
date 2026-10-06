@@ -455,26 +455,19 @@ document.addEventListener('DOMContentLoaded', function () {
     currentIndex = index;
 
     const wasOpen = hymnView.classList.contains('is-open');
-    const slideDir = direction === 'next' ? 1 : direction === 'prev' ? -1 : 0;
 
-    if (wasOpen && slideDir !== 0) {
-      // Slide the current hymn out, then the new one in.
-      hymnViewBody.style.transition = 'transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease';
-      hymnViewBody.style.transform = 'translateX(' + (slideDir * 40) + '%)';
+    if (wasOpen && hymnViewBody) {
+      // Gentle crossfade: fade out, swap text, fade in.
+      hymnViewBody.style.transition = 'opacity 0.22s ease';
+      hymnViewBody.style.opacity = '0';
 
-      requestAnimationFrame(function () {
-        setTimeout(function () {
-          hymnViewBody.style.opacity = '0';
-          hymnViewBody.style.transform = 'translateX(' + (slideDir * -100) + '%)';
-
-          setTimeout(function () {
-            fillHymn(hymn);
-            hymnViewBody.style.transition = 'transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease';
-            hymnViewBody.style.transform = 'translateX(0)';
-            hymnViewBody.style.opacity = '1';
-          }, 180);
-        }, 180);
-      });
+      setTimeout(function () {
+        fillHymn(hymn);
+        if (hymnViewBody) {
+          hymnViewBody.style.transition = 'opacity 0.28s ease';
+          hymnViewBody.style.opacity = '1';
+        }
+      }, 180);
     } else {
       fillHymn(hymn);
     }
