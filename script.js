@@ -254,6 +254,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  function navigateToPage(url) {
+    if (reducedMotion || !pageLoader) {
+      window.location.assign(url);
+      return;
+    }
+
+    drawProgress(0);
+    showLoader();
+    lockScroll();
+    animateProgress(480, function () {
+      drawProgress(1);
+      setTimeout(function () {
+        window.location.assign(url);
+      }, 180);
+    });
+  }
+
+  document.querySelectorAll('a[href="hymns.html"], a[href="index.html"]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        link.target === '_blank'
+      ) return;
+
+      event.preventDefault();
+      if (document.body.classList.contains('menu-open')) {
+        document.body.classList.remove('menu-open');
+        if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      navigateToPage(link.href);
+    });
+  });
+
   // ---- Aesthetic enhancements ----
 
   // Scroll reveal on sections & cards
@@ -417,11 +455,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!list.length) {
       const empty = document.createElement('p');
       empty.className = 'hymn-empty';
-      empty.textContent =
-        'No hymns match your search. Try a hymn number (e.g. “375”) or part of a title (e.g. “Abide with me”).';
+      empty.textContent = hymnSearch.value.trim()
+        ? 'No hymns match your search. Try a number, a shorter phrase, or a lyric.'
+        : 'Search by hymn number, title, lyric, or author to get started.';
       hymnGrid.appendChild(empty);
       if (hymnCount) {
-        hymnCount.textContent = 'No matches found in the ' + HYMN_TOTAL + ' MHB hymns';
+        hymnCount.textContent = hymnSearch.value.trim()
+          ? 'No matches found in the ' + HYMN_TOTAL + ' MHB hymns'
+          : HYMN_TOTAL + ' hymns ready to search';
       }
       return;
     }
@@ -706,7 +747,26 @@ document.addEventListener('DOMContentLoaded', function () {
   const galleryNext = document.getElementById('galleryNext');
   const galleryViewClose = document.getElementById('galleryViewClose');
   const galleryOpenBtn = document.getElementById('openGallery');
+  const aboutGalleryGrid = document.getElementById('aboutGalleryGrid');
   let galleryIndex = 0;
+
+  if (aboutGalleryGrid) {
+    aboutGalleryGrid.innerHTML = GALLERY_IMAGES.map(function (img, i) {
+      return '<button type="button" class="gallery-item" data-index="' + i + '" aria-label="Open photo: ' + escapeHtml(img.alt) + '">' +
+        '<img src="' + img.src + '" alt="' + escapeHtml(img.alt) + '" loading="lazy" />' +
+        '<span class="gallery-caption">' + escapeHtml(img.alt) + '</span>' +
+      '</button>';
+    }).join('');
+  }
+
+  if (aboutGalleryGrid) {
+    aboutGalleryGrid.addEventListener('click', function (event) {
+      const item = event.target.closest('.gallery-item');
+      if (!item) return;
+      const index = parseInt(item.getAttribute('data-index'), 10);
+      if (!isNaN(index)) openGallery(index);
+    });
+  }
 
   function buildGallery() {
     if (!galleryStage || !galleryThumbs) return;
