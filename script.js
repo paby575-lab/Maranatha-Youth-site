@@ -682,4 +682,163 @@ document.addEventListener('DOMContentLoaded', function () {
       host.addEventListener('pointercancel', clearInks);
     });
   }
+
+  // ---- Gallery viewer (modal with carousel) ----
+  const GALLERY_IMAGES = [
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.04%20AM.jpeg', alt: 'Youth fellowship gathering' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.05%20AM.jpeg', alt: 'Worship session' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.06%20AM.jpeg', alt: 'Group prayer' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.06%20AM%20(1).jpeg', alt: 'Youth activity' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.06%20AM%20(2).jpeg', alt: 'Bible study' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.07%20AM.jpeg', alt: 'Fellowship moment' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.07%20AM%20(1).jpeg', alt: 'Community service' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.07%20AM%20(2).jpeg', alt: 'Youth outreach' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.08%20AM.jpeg', alt: 'Worship team' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.08%20AM%20(1).jpeg', alt: 'Group discussion' },
+    { src: 'assets/WhatsApp%20Image%202026-10-07%20at%208.51.09%20AM.jpeg', alt: 'Celebration' }
+  ];
+
+  const galleryView = document.getElementById('galleryView');
+  const galleryStage = document.getElementById('galleryStage');
+  const galleryThumbs = document.getElementById('galleryThumbs');
+  const galleryCaption = document.getElementById('galleryCaption');
+  const galleryPrev = document.getElementById('galleryPrev');
+  const galleryNext = document.getElementById('galleryNext');
+  const galleryViewClose = document.getElementById('galleryViewClose');
+  const galleryOpenBtn = document.getElementById('openGallery');
+  let galleryIndex = 0;
+
+  function buildGallery() {
+    if (!galleryStage || !galleryThumbs) return;
+
+    // Build stage images
+    galleryStage.innerHTML = GALLERY_IMAGES.map(function (img, i) {
+      return '<figure class="gallery-slide" data-index="' + i + '" style="opacity: 0; transform: translateX(40px); transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);">' +
+        '<img src="' + img.src + '" alt="' + escapeHtml(img.alt) + '" loading="lazy" />' +
+        '</figure>';
+    }).join('');
+
+    // Build thumbnails
+    galleryThumbs.innerHTML = GALLERY_IMAGES.map(function (img, i) {
+      return '<button type="button" class="gallery-thumb" role="tab" aria-selected="' + (i === 0) + '" aria-label="Image ' + (i + 1) + ': ' + escapeHtml(img.alt) + '" data-index="' + i + '">' +
+        '<img src="' + img.src + '" alt="" loading="lazy" />' +
+        '</button>';
+    }).join('');
+
+    showGalleryImage(0);
+  }
+
+  function showGalleryImage(index) {
+    if (!galleryStage || !galleryThumbs) return;
+    galleryIndex = Math.max(0, Math.min(index, GALLERY_IMAGES.length - 1));
+
+    const slides = galleryStage.querySelectorAll('.gallery-slide');
+    const thumbs = galleryThumbs.querySelectorAll('.gallery-thumb');
+
+    slides.forEach(function (slide, i) {
+      if (i === galleryIndex) {
+        slide.style.opacity = '1';
+        slide.style.transform = 'translateX(0)';
+      } else {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateX(' + (i < galleryIndex ? '-40px' : '40px') + ')';
+      }
+    });
+
+    thumbs.forEach(function (thumb, i) {
+      thumb.setAttribute('aria-selected', i === galleryIndex);
+      thumb.classList.toggle('is-active', i === galleryIndex);
+    });
+
+    if (galleryPrev) galleryPrev.disabled = galleryIndex === 0;
+    if (galleryNext) galleryNext.disabled = galleryIndex === GALLERY_IMAGES.length - 1;
+
+    if (galleryCaption) {
+      galleryCaption.textContent = GALLERY_IMAGES[galleryIndex].alt;
+    }
+  }
+
+  function openGallery(atIndex) {
+    if (!galleryView) return;
+    buildGallery();
+    galleryIndex = atIndex || 0;
+    showGalleryImage(galleryIndex);
+
+    document.body.classList.add('gallery-open');
+    galleryView.classList.add('is-open');
+    galleryView.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (galleryViewClose) galleryViewClose.focus();
+  }
+
+  function closeGallery() {
+    if (!galleryView) return;
+    galleryView.classList.remove('is-open');
+    galleryView.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('gallery-open');
+    document.body.style.overflow = '';
+  }
+
+  if (galleryOpenBtn) {
+    galleryOpenBtn.addEventListener('click', function () {
+      openGallery(0);
+    });
+  }
+
+  if (galleryViewClose) {
+    galleryViewClose.addEventListener('click', closeGallery);
+  }
+
+  if (galleryView) {
+    galleryView.addEventListener('click', function (event) {
+      if (event.target === galleryView) closeGallery();
+    });
+  }
+
+  if (galleryPrev) {
+    galleryPrev.addEventListener('click', function () {
+      if (galleryIndex > 0) showGalleryImage(galleryIndex - 1);
+    });
+  }
+
+  if (galleryNext) {
+    galleryNext.addEventListener('click', function () {
+      if (galleryIndex < GALLERY_IMAGES.length - 1) showGalleryImage(galleryIndex + 1);
+    });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function (event) {
+    if (!galleryView || !galleryView.classList.contains('is-open')) return;
+    if (event.key === 'Escape') closeGallery();
+    if (event.key === 'ArrowLeft' && galleryPrev && !galleryPrev.disabled) showGalleryImage(galleryIndex - 1);
+    if (event.key === 'ArrowRight' && galleryNext && !galleryNext.disabled) showGalleryImage(galleryIndex + 1);
+  });
+
+  // Thumbnail clicks (delegated)
+  if (galleryThumbs) {
+    galleryThumbs.addEventListener('click', function (event) {
+      const thumb = event.target.closest('.gallery-thumb');
+      if (thumb) {
+        const idx = parseInt(thumb.getAttribute('data-index'), 10);
+        if (!isNaN(idx)) showGalleryImage(idx);
+      }
+    });
+  }
+
+  // Swipe support for mobile
+  let touchStartX = 0;
+  if (galleryStage) {
+    galleryStage.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    galleryStage.addEventListener('touchend', function (e) {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) {
+        if (dx < 0 && galleryNext && !galleryNext.disabled) showGalleryImage(galleryIndex + 1);
+        else if (dx > 0 && galleryPrev && !galleryPrev.disabled) showGalleryImage(galleryIndex - 1);
+      }
+    }, { passive: true });
+  }
+
 });
