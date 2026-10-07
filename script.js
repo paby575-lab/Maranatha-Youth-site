@@ -636,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Mobile tap ripple feedback
   const rippleHosts = document.querySelectorAll(
-    '.send-method-btn, .hymn-card, .btn, .menu-toggle, .back-to-top, .panel-link, .link-arrow, .footer-col a'
+    '.send-method-btn, .hymn-card, .btn, .menu-toggle, .back-to-top, .panel-link, .link-arrow, .footer-col a, .resource-cta, .hymn-intro-cta, .hymn-nav-btn, .hymn-view-close, .mission-card, .point-card, .update-card, .resource-card, .anthem-card, [data-method], .verse-band blockquote'
   );
 
   if (window.PointerEvent && !reducedMotion && rippleHosts.length) {
